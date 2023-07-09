@@ -99,7 +99,7 @@ export default class SignUp extends Component {
       } else {
         e.preventDefault();
         console.log(fname, lname, email, password, mobile, userType);
-        fetch("http://localhost:5000/register", {
+        fetch("http://localhost:5000/userDetails", {
           method: "POST",
           crossDomain: true,
           headers: {

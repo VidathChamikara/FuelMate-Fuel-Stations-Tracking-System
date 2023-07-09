@@ -3,9 +3,13 @@ const mongoose = require('mongoose');
 const fuelStationSchema = new mongoose.Schema({
   fuelStationName: String,
   ownerName:  String,
-  email: { type: String, unique: true },
+  email: String,
   password:  String,
-  location:  String,
+  locationName:  String,
+  mobile: String,
+  latitude: Number,
+  longitude: Number,
+  userType: String,
 },
 {
 

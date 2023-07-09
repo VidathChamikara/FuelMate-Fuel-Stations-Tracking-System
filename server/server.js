@@ -8,7 +8,7 @@ app.use(cors());
 const bcrypt = require("bcryptjs");
 
 const mongoUrl =
-  "mongodb+srv://ChamudiChanuki99:Chamudi99@fuelmate.fcjo4oj.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://vidathamarasekara99:vidath99@fuelmate.fcjo4oj.mongodb.net/?retryWrites=true&w=majority";
 
 mongoose
   .connect(mongoUrl, {
@@ -19,11 +19,13 @@ mongoose
   })
   .catch((e) => console.log(e));
 
+  //fuelStation methods
+
   require("./FuelStationDetails");
   const FuelStation = mongoose.model("FuelStationInfo");
   
   app.post("/fuel-station/register", async (req, res) => {
-    const { fuelStationName, ownerName, email, password, location } = req.body;
+    const { fuelStationName, ownerName, email, password, locationName, mobile, latitude,  longitude, userType } = req.body;
   
     const encryptedPassword = await bcrypt.hash(password, 10);
     try {
@@ -37,7 +39,11 @@ mongoose
         ownerName,
         email,
         password: encryptedPassword,
-        location,
+        locationName,
+        mobile,
+        latitude,
+        longitude,
+        userType,
       });
       res.send({ status: "ok" });
     } catch (error) {

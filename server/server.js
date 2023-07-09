@@ -104,6 +104,15 @@ mongoose
     }
   });
 
+  app.get("/getAllUser", async (req, res) => {
+    try {
+      const allUser = await User.find({}).collation({});
+      res.send({ status: "ok", data: allUser });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   //Login
 
   app.post("/login-user", async (req, res) => {
@@ -124,5 +133,67 @@ mongoose
     }
     res.json({ status: "error", error: "Invalid Password" });
   });
+
+  app.post("/userData", async (req, res) => {
+    const { token } = req.body;
+    try {
+      const user = jwt.verify(token, JWT_SECRET, (err, res) => {
+        if (err) {
+          return "token expired";
+        }
+        return res;
+      });
+      console.log(user);
+      if (user == "token expired") {
+        return res.send({ status: "error", data: "token expired" });
+      }
+      const usermail = user.email;
+      User.findOne({ email: usermail })
+        .collation({})
+        .then((data) => {
+          res.send({ status: "ok", data: data });
+        })
+        .catch((error) => {
+          res.send({ status: "error", data: error });
+        });
+    } catch (error) {}
+  });
+
+  //forgot password
+
+  app.post("/forgot-password", async (req, res) => {
+    const { email } = req.body;
+    try {
+      const oldUser = await User.findOne({ email }).collation({});
+      if (!oldUser) {
+        return res.json({ status: "User Not Exits!!" });
+      }
+      const secret = JWT_SECRET + oldUser.password;
+      const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, {
+        expiresIn: "5m",
+      });
+      const link = `http://localhost:5000/reset-password/${oldUser._id}/${token}`;
+      console.log(link);
+    } catch (error) {}
+  });
+  
+  app.get("/reset-password/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
+    console.log(req.params);
+    const oldUser = await User.findOne({ _id: id });
+    if (!oldUser) {
+      return res.json({ status: "User Not Exists!!" });
+    }
+    const secret = JWT_SECRET + oldUser.password;
+    try {
+      const verify = jwt.verify(token, secret);
+      res.render("index", { email: verify.email, status: "Not Verified" });
+    } catch (error) {
+      console.log(error);
+      res.send("Not Verified");
+    }
+  });
+
+ 
 
 app.listen(5000, () => { console.log("Server started on port 5000")}) //define which port to run server(npm run dev)

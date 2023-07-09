@@ -78,7 +78,7 @@ mongoose
   require("./userDetails");
 
   const User = mongoose.model("UserInfo");
-  app.post("/register", async (req, res) => {
+  app.post("/userDetails", async (req, res) => {
     const { fname, lname, email, password, mobile, userType } = req.body;
   
     const encryptedPassword = await bcrypt.hash(password, 10);
@@ -102,6 +102,27 @@ mongoose
     } catch (error) {
       res.send({ status: "error" });
     }
+  });
+
+  //Login
+
+  app.post("/login-user", async (req, res) => {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email }).collation({});
+    if (!user) {
+      return res.json({ error: "User Not Found" });
+    }
+    if (await bcrypt.compare(password, user.password)) {
+      const token = jwt.sign({ email: user.email }, JWT_SECRET, {
+        expiresIn: "15m",
+      });
+      if (res.status(201)) {
+        return res.json({ status: "ok", data: token });
+      } else {
+        return res.json({ error: "error" });
+      }
+    }
+    res.json({ status: "error", error: "Invalid Password" });
   });
 
 app.listen(5000, () => { console.log("Server started on port 5000")}) //define which port to run server(npm run dev)

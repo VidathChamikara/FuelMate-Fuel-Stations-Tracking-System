@@ -23,7 +23,7 @@ export default class SignUp extends Component {
     e.preventDefault();   
       const { fname, lname, email, password, mobile, userType, secretKey } =
         this.state;
-      if (this.state.userType == "Admin" && this.state.secretKey != "nia") {
+      if (this.state.userType == "Admin" && this.state.secretKey != "admin") {
         e.preventDefault();
         alert("Invalid Admin");
       } else {
@@ -72,6 +72,13 @@ export default class SignUp extends Component {
             onChange={(e) => this.setState({ userType: e.target.value })}
           />
           <label>User</label> &nbsp;
+          <input
+            type="radio"
+            name="UserType"
+            value="Fuel Station"
+            onChange={(e) => this.setState({ userType: e.target.value })}
+          />
+          <label>Fuel Station</label> &nbsp;
           <input
             type="radio"
             name="UserType"

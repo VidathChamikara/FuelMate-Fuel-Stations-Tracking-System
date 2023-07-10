@@ -4,8 +4,7 @@ export default class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fname: "",
-      lname: "",
+      name: "",
       email: "",
       mobile: "",
       password: "",
@@ -21,14 +20,14 @@ export default class SignUp extends Component {
 
   handleSubmit(e) {
     e.preventDefault();   
-      const { fname, lname, email, password, mobile, userType, secretKey } =
+      const { name, email, password, mobile, userType, secretKey } =
         this.state;
       if (this.state.userType == "Admin" && this.state.secretKey != "admin") {
         e.preventDefault();
         alert("Invalid Admin");
       } else {
         e.preventDefault();
-        console.log(fname, lname, email, password, mobile, userType);
+        console.log(name, email, password, mobile, userType);
         fetch("http://localhost:5000/register", {
           method: "POST",
           crossDomain: true,
@@ -38,8 +37,7 @@ export default class SignUp extends Component {
             "Access-Control-Allow-Origin": "*",
           },
           body: JSON.stringify({
-            fname,
-            lname,
+            name,
             email,
             password,
             mobile,
@@ -100,22 +98,12 @@ export default class SignUp extends Component {
         ) : null}
         <div id="recaptcha-container"></div>
         <div className="mb-3">
-          <label>First name</label>
+          <label>Name</label>
           <input
             type="text"
             className="form-control"
-            placeholder="First name"
-            onChange={(e) => this.setState({ fname: e.target.value })}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label>Last name</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Last name"
-            onChange={(e) => this.setState({ lname: e.target.value })}
+            placeholder="Name"
+            onChange={(e) => this.setState({ name: e.target.value })}
           />
         </div>
 

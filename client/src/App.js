@@ -8,6 +8,7 @@ import SignUp from "./components/signup_component";
 import UserDetails from "./components/userDetails";
 import UserHome from "./components/userHome";
 import AdminHome from "./components/AdminHome";
+import LocationForm from "./components/locationForm";
 function App() {
   return (
     <Router>
@@ -43,6 +44,7 @@ function App() {
               <Route path="/userDetails" element={< UserDetails />} />
               <Route path="/userHome" element={< UserHome />} />
               <Route path="/adminHome" element={< AdminHome />} />
+              <Route path="/locationForm" element={< LocationForm />} />
 
             </Routes>
           </div>

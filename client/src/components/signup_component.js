@@ -1,12 +1,5 @@
 import React, { Component } from "react";
-import app from "./firebase_config";
-import {
-  getAuth,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from "firebase/auth";
 
-const auth = getAuth(app);
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
@@ -24,82 +17,19 @@ export default class SignUp extends Component {
       verified: false,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.onSignInSubmit = this.onSignInSubmit.bind(this);
-    this.verifyCode = this.verifyCode.bind(this);
   }
-  onCaptchVerify() {
-    const auth = getAuth();
-    window.recaptchaVerifier = new RecaptchaVerifier(
-      "recaptcha-container",
-      {
-        size: "invisible",
-        callback: (response) => {
-          this.onSignInSubmit();
-          // reCAPTCHA solved, allow signInWithPhoneNumber.
-          // ...
-        },
-      },
-      auth
-    );
-  }
-  onSignInSubmit() {
-    this.onCaptchVerify();
-    const phoneNumber = this.state.mobile;
-    const appVerifier = window.recaptchaVerifier;
-    signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-      .then((confirmationResult) => {
-        // SMS sent. Prompt user to type the code from the message, then sign the
-        // user in with confirmationResult.confirm(code).
-        window.confirmationResult = confirmationResult;
-        alert("otp sended");
-        this.setState({ verifyOtp: true });
-        // ...
-      })
-      .catch((error) => {
-        // Error; SMS not sent
-        // ...
-      });
-  }
-  verifyCode() {
-    window.confirmationResult
-      .confirm(this.state.otp)
-      .then((result) => {
-        // User signed in successfully.
-        const user = result.user;
-        console.log(user);
-        alert("Verification Done");
-        this.setState({
-          verified: true,
-          verifyOtp: false,
-        });
-        // ...
-      })
-      .catch((error) => {
-        alert("Invalid Otp");
-        // User couldn't sign in (bad verification code?)
-        // ...
-      });
-  }
-  changeMobile(e) {
-    this.setState({ mobile: e.target.value }, function () {
-      if (this.state.mobile.length == 12) {
-        this.setState({
-          verifyButton: true,
-        });
-      }
-    });
-  }
+
   handleSubmit(e) {
-    e.preventDefault();
-    if (this.state.verified) {
-      const { fname, lname, email, password, mobile, userType, secretKey } = this.state;
+    e.preventDefault();   
+      const { fname, lname, email, password, mobile, userType, secretKey } =
+        this.state;
       if (this.state.userType == "Admin" && this.state.secretKey != "nia") {
         e.preventDefault();
         alert("Invalid Admin");
       } else {
         e.preventDefault();
         console.log(fname, lname, email, password, mobile, userType);
-        fetch("http://localhost:5000/userDetails", {
+        fetch("http://localhost:5000/register", {
           method: "POST",
           crossDomain: true,
           headers: {
@@ -126,12 +56,8 @@ export default class SignUp extends Component {
             }
             window.location.reload();
           });
-      }} else {
-        alert("Please Verify Mobile");
       }
-      
-     
-  
+    
   }
   render() {
     return (
@@ -162,7 +88,6 @@ export default class SignUp extends Component {
               className="form-control"
               placeholder="Secret Key"
               onChange={(e) => this.setState({ secretKey: e.target.value })}
-              
             />
           </div>
         ) : null}
@@ -203,46 +128,9 @@ export default class SignUp extends Component {
             type="tel"
             className="form-control"
             placeholder="Enter mobile(+94xxxxxxxxx)"
-            onChange={(e) => this.changeMobile(e)}
+            onChange={(e) => this.setState({ mobile: e.target.value })}
           />
-          {this.state.verifyButton ? (
-            <input
-              type="button"
-              value={this.state.verified ? "Verified" : "Verify"}
-              onClick={this.onSignInSubmit}
-              style={{
-                backgroundColor: "#0163d2",
-                width: "100%",
-                padding: 8,
-                color: "white",
-                border: "none",
-              }}
-            />
-          ) : null}
         </div>
-        {this.state.verifyOtp ? (
-          <div className="mb-3">
-            <label>OTP</label>
-            <input
-              type="tel"
-              className="form-control"
-              placeholder="Enter OTP"
-              onChange={(e) => this.setState({ otp: e.target.value })}
-            />
-            <input
-              type="button"
-              value="OTP"
-              onClick={this.verifyCode}
-              style={{
-                backgroundColor: "#0163d2",
-                width: "100%",
-                padding: 8,
-                color: "white",
-                border: "none",
-              }}
-            />
-          </div>
-        ) : null}
 
         <div className="mb-3">
           <label>Password</label>

@@ -78,7 +78,7 @@ mongoose
   require("./userDetails");
 
   const User = mongoose.model("UserInfo");
-  app.post("/userDetails", async (req, res) => {
+  app.post("/register", async (req, res) => {
     const { fname, lname, email, password, mobile, userType } = req.body;
   
     const encryptedPassword = await bcrypt.hash(password, 10);

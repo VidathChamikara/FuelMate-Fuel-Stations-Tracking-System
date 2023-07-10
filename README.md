@@ -1,4 +1,3 @@
-# FuelMate-Fuel-Stations-Tracking-System
 This software help to user find the nearest fuel station locations.
 ![FuelMate_Login](https://github.com/VidathChamikara/FuelMate-Fuel-Stations-Tracking-System/assets/86880920/788d8569-07e4-4112-abd2-0f8710285ddc)
 ![signup](https://github.com/VidathChamikara/FuelMate-Fuel-Stations-Tracking-System/assets/86880920/a092298e-aeed-4ac6-abf7-2a9d6a866ea8)

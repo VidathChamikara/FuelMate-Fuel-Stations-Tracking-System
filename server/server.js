@@ -112,6 +112,39 @@ mongoose
     }
   });
 
+  //Location
+
+require("./myLocation");
+const Location = mongoose.model("myLocationInfo");
+app.post("/location", async (req, res) => {
+  const { latitude, longitude, currentDateTime, locationName } = req.body;
+  try {
+    const oldLocation = await Location.findOne({ latitude,longitude }).collation({});
+
+    if (oldLocation) {
+      return res.send({ status: "Elephant Exists" });
+    }
+    Location.create({
+      latitude,
+      longitude,
+      currentDateTime,
+      locationName,
+    });
+    res.send({ status: "ok" });
+  } catch (error) {
+    res.send({ status: "error" });
+  }
+});
+
+app.get("/getAllLocation", async (req, res) => {
+  try {
+    const allLocation = await Location.find({}).collation({});
+    res.send({ status: "ok", data: allLocation });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
   //Login
 
   app.post("/login-user", async (req, res) => {

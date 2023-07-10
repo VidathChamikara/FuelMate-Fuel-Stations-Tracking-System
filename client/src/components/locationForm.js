@@ -48,6 +48,7 @@ class LocationForm extends Component {
         locationName,
       });
       alert("Location stored successfully or already added.");
+      window.location.href = "./locationMap";
     } catch (error) {
       console.error("Error storing location:", error);
       alert("Error storing location.");
@@ -87,7 +88,7 @@ class LocationForm extends Component {
             />
           </div>
             <button className="btn btn-outline-primary" type="submit">
-              Store Elephant Time & Location
+              Add Your Current Location
             </button>
             <p className="forgot-password text-right">
           <a href="/userHome">Back To Home</a>

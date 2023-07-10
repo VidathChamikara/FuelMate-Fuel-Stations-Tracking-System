@@ -9,6 +9,7 @@ import UserDetails from "./components/userDetails";
 import UserHome from "./components/userHome";
 import AdminHome from "./components/AdminHome";
 import LocationForm from "./components/locationForm";
+import LocationMap from "./components/LocationMap";
 function App() {
   return (
     <Router>
@@ -45,7 +46,7 @@ function App() {
               <Route path="/userHome" element={< UserHome />} />
               <Route path="/adminHome" element={< AdminHome />} />
               <Route path="/locationForm" element={< LocationForm />} />
-
+              <Route path="/locationMap" element={< LocationMap />} />
             </Routes>
           </div>
         </div>

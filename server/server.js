@@ -169,28 +169,36 @@ app.get("/getAllLocation", async (req, res) => {
   app.post("/userData", async (req, res) => {
     const { token } = req.body;
     try {
-      const user = jwt.verify(token, JWT_SECRET, (err, res) => {
+      const user = jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
         if (err) {
           return "token expired";
         }
-        return res;
+        return decodedToken;
       });
-      console.log(user);
-      if (user == "token expired") {
+  
+      if (user === "token expired") {
         return res.send({ status: "error", data: "token expired" });
       }
-      const usermail = user.email;
-      User.findOne({ email: usermail })
+  
+      const { email } = user;
+  
+      User.findOne({ email })
         .collation({})
         .then((data) => {
-          res.send({ status: "ok", data: data });
+          if (data) {
+            res.send({ status: "ok", data });
+          } else {
+            res.send({ status: "error", data: "User not found" });
+          }
         })
         .catch((error) => {
           res.send({ status: "error", data: error });
         });
-    } catch (error) {}
+    } catch (error) {
+      res.send({ status: "error", data: error.message });
+    }
   });
-
+  
   //forgot password
 
   app.post("/forgot-password", async (req, res) => {

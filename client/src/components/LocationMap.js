@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+
+
 const LocationMap = () => {
   const [locations, setLocations] = useState({ status: "ok", data: [] });
   const [activeTab, setActiveTab] = useState('map');
@@ -35,7 +37,7 @@ const LocationMap = () => {
           const marker = new window.google.maps.Marker({
             position: { lat: location.latitude, lng: location.longitude },
             map,
-            title: 'Location',
+            title: 'My Location',
           });
         });
       }

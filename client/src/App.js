@@ -6,10 +6,16 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Login from "./components/login_component";
 import SignUp from "./components/signup_component";
 import UserDetails from "./components/userDetails";
-import UserHome from "./components/userHome";
+//Admin 
 import AdminHome from "./components/AdminHome";
+//User 
+import UserHome from "./components/userHome";
 import LocationForm from "./components/locationForm";
 import LocationMap from "./components/LocationMap";
+//FuelStation
+import FuelStationHome from "./components/FuelStationHome";
+import FuelDetails from "./components/FuelDetailForm";
+
 function App() {
   return (
     <Router>
@@ -43,10 +49,15 @@ function App() {
               <Route path="/sign-in" element={<Login />} />
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/userDetails" element={< UserDetails />} />
-              <Route path="/userHome" element={< UserHome />} />
+
               <Route path="/adminHome" element={< AdminHome />} />
+
+              <Route path="/userHome" element={< UserHome />} />
               <Route path="/locationForm" element={< LocationForm />} />
               <Route path="/locationMap" element={< LocationMap />} />
+
+              <Route path="/fuelStationHome" element={< FuelStationHome />} />
+              <Route path="/fuelDetails" element={< FuelDetails />} />
             </Routes>
           </div>
         </div>

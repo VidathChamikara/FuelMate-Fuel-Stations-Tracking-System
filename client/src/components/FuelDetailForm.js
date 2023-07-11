@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-export default class FuelStationSignUp extends Component {
+export default class FuelDetails extends Component {
     constructor(props){
       super(props);
       this.state = {
@@ -81,7 +81,7 @@ export default class FuelStationSignUp extends Component {
               </button>
             </div>
             <p className="forgot-password text-right">
-              Already registered <a href="/sign-in">sign in?</a>
+              Back to <a href="/fuelStationHome">Home</a>
             </p>
           </form>
         )

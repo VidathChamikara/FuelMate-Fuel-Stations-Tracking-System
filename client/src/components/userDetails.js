@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import UserHome from "./userHome";
 import AdminHome from "./AdminHome";
+import FuelStationHome from "./FuelStationHome";
 
 export default class UserDetails extends Component {
   constructor(props) {
@@ -8,6 +9,7 @@ export default class UserDetails extends Component {
     this.state = {
       userData: "",
       admin: false,
+      fuelStation: false,
     };
   }
 
@@ -27,28 +29,40 @@ export default class UserDetails extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data, "userData");
-        if (data.data.userType == "Admin") {
+        if (data.data.userType === "Admin") {
           this.setState({ admin: true });
         }
+        if (data.data.userType === "Fuel Station") {
+          this.setState({ fuelStation: true });
+        }
         this.setState({ userData: data.data });
-        if (data.data == "token expired") {
-          alert("Token expired login again");
+        if (data.data === "token expired") {
+          alert("Token expired. Please log in again.");
           window.localStorage.clear();
           window.location.href = "./sign-in";
         }
       });
   }
+
   logOut = () => {
     window.localStorage.clear();
     window.location.href = "./sign-in";
   };
+
   render() {
-    const { admin } = this.state;
+    const { admin, fuelStation, userData } = this.state;
+
     return (
       <div>
-      {admin ? <AdminHome /> : <UserHome />}
-    </div>
-     
+        {admin ? (
+          <AdminHome />
+        ) : fuelStation ? (
+          <FuelStationHome  />
+        ) : (
+          <UserHome />
+        )}
+      </div>
     );
   }
 }
+

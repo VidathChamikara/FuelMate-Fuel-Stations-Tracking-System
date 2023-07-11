@@ -23,7 +23,7 @@ mongoose
   })
   .catch((e) => console.log(e));
 
-  //fuelStation methods
+  //fuelStation methods(Chamudi)
 
   require("./FuelStationDetails");
   const FuelStation = mongoose.model("FuelStationInfo");
@@ -58,20 +58,61 @@ mongoose
   require("./FuelDetails");
   const Fuel = mongoose.model("FuelInfo");
   app.post("/fuel", async (req, res) => {
-  const { nDesel, sDesel, nPetrol, sPetrol } = req.body;
-  try{
+    const { token, nDesel, sDesel, nPetrol, sPetrol } = req.body;
+    
+    try {
+      const user = jwt.verify(token, JWT_SECRET);
+      
+      const { email } = user;
+      
+      const fuelStationUser = await User.findOne({ email }).collation({});
+      
+      if (!fuelStationUser) {
+        return res.send({ status: "error", data: "Fuel station user not found" });
+      }
+      
       await Fuel.create({
+        userId: fuelStationUser._id,
         nDesel,
         sDesel,
         nPetrol,
         sPetrol,
       });
+      
       res.send({ status: "ok" });
     } catch (error) {
-      res.send({ status: "error" });
+      res.send({ status: "error", data: error.message });
     }
-  
   });
+  
+  app.post("/fuelDetails", async (req, res) => {
+    const { token }=req.body;
+  
+    try {
+      const user = jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+        if (err) {
+          return "token expired";
+        }
+        return decodedToken;
+      });
+  
+      if (user === "token expired") {
+        return res.send({ status: "error", data: "token expired" });
+      }
+      const { email } = user;
+  
+      const fuelStationUser = await User.findOne({ email }).collation({});
+      if (!fuelStationUser) {
+        return res.send({ status: "error", data: "Fuel station user not found" });
+      }
+  
+      const fuelDetails = await Fuel.find({ userId: fuelStationUser._id });
+      res.send({ status: "ok", data: fuelDetails });
+    } catch (error) {
+      res.send({ status: "error", data: error.message });
+    }
+  });
+  
 
   //User Methods
 
@@ -112,7 +153,7 @@ mongoose
     }
   });
 
-  //Location
+  //UserLocation
 
 require("./myLocation");
 const Location = mongoose.model("myLocationInfo");
@@ -155,7 +196,7 @@ app.get("/getAllLocation", async (req, res) => {
     }
     if (await bcrypt.compare(password, user.password)) {
       const token = jwt.sign({ email: user.email }, JWT_SECRET, {
-        expiresIn: "15m",
+        expiresIn: "60m",
       });
       if (res.status(201)) {
         return res.json({ status: "ok", data: token });

@@ -27,6 +27,11 @@ export default class FuelStationHome extends Component {
       .then((data) => {
         console.log(data, "userData");
         this.setState({ userData: data.data });
+        if (data.data === "token expired") {
+          alert("Token expired. Please log in again.");
+          window.localStorage.clear();
+          window.location.href = "./sign-in";
+        }
       });
   }
 
@@ -84,7 +89,7 @@ export default class FuelStationHome extends Component {
               }}
             >
               <div className="card-body text-center">
-                <a href="/locationForm">
+                <a href="">
                   <div className="circle-image">
                     <img src={station} alt="Card 2" />
                   </div>

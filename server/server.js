@@ -70,6 +70,13 @@ mongoose
       if (!fuelStationUser) {
         return res.send({ status: "error", data: "Fuel station user not found" });
       }
+
+      const oldData = await Fuel.findOne({ fuelStationUser }).collation({});
+  
+      if (oldData) {
+        return res.send({ status: "Already Added Data" });
+      }
+  
       
       await Fuel.create({
         userId: fuelStationUser._id,
@@ -158,14 +165,26 @@ mongoose
 require("./myLocation");
 const Location = mongoose.model("myLocationInfo");
 app.post("/location", async (req, res) => {
-  const { latitude, longitude, currentDateTime, locationName } = req.body;
+  const { token, latitude, longitude, currentDateTime, locationName } = req.body;
   try {
-    const oldLocation = await Location.findOne({ latitude,longitude }).collation({});
+
+    const user = jwt.verify(token, JWT_SECRET);
+      
+      const { email } = user;
+      
+      const fuelStationUser = await User.findOne({ email }).collation({});
+      
+      if (!fuelStationUser) {
+        return res.send({ status: "error", data: "Fuel station user not found" });
+      }
+
+    const oldLocation = await Location.findOne({  userId: fuelStationUser._id,latitude,longitude }).collation({});
 
     if (oldLocation) {
-      return res.send({ status: "Elephant Exists" });
+      return res.send({ status: "Location Exists" });
     }
     Location.create({
+      userId: fuelStationUser._id,
       latitude,
       longitude,
       currentDateTime,
@@ -177,14 +196,73 @@ app.post("/location", async (req, res) => {
   }
 });
 
-app.get("/getAllLocation", async (req, res) => {
+app.post("/getAllLocation", async (req, res) => {
+  const { token }=req.body;
   try {
-    const allLocation = await Location.find({}).collation({});
+    const user = jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+      if (err) {
+        return "token expired";
+      }
+      return decodedToken;
+    });
+
+    if (user === "token expired") {
+      return res.send({ status: "error", data: "token expired" });
+    }
+    const { email } = user;
+
+    const fuelStationUser = await User.findOne({ email }).collation({});
+    if (!fuelStationUser) {
+      return res.send({ status: "error", data: "Fuel station user not found" });
+    }
+    const allLocation = await Location.find({ userId: fuelStationUser._id }).collation({});
     res.send({ status: "ok", data: allLocation });
   } catch (error) {
     console.log(error);
   }
 });
+
+app.delete("/location/:id", async (req, res) => {
+  const { token } = req.body;
+  const locationId = req.params.id;
+
+  try {
+    const user = jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+      if (err) {
+        return "token expired";
+      }
+      return decodedToken;
+    });
+
+    if (user === "token expired") {
+      return res.send({ status: "error", data: "token expired" });
+    }
+
+    const { email } = user;
+
+    const fuelStationUser = await User.findOne({ email }).collation({});
+    if (!fuelStationUser) {
+      return res.send({ status: "error", data: "Fuel station user not found" });
+    }
+
+    const location = await Location.findById(locationId).collation({});
+    if (!location) {
+      return res.send({ status: "error", data: "Location not found" });
+    }
+
+    if (location.userId.toString() !== fuelStationUser._id.toString()) {
+      return res.send({ status: "error", data: "Unauthorized to delete this location" });
+    }
+
+    await Location.findByIdAndDelete(locationId).collation({});
+
+    res.send({ status: "ok", data: "Location deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.send({ status: "error", data: "An error occurred" });
+  }
+});
+
 
   //Login
 

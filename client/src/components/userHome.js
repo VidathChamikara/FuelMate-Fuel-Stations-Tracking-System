@@ -26,8 +26,17 @@ componentDidMount() {
     .then((data) => {
       console.log(data, "userData");
       this.setState({ userData: data.data });
+      if (data.data === "token expired") {
+        alert("Token expired. Please log in again.");
+        window.localStorage.clear();
+        window.location.href = "./sign-in";
+      }
     });
 }
+logOut = () => {
+  window.localStorage.clear();
+  window.location.href = "./sign-in";
+};
   render() {
     const { userData } = this.state;
     return (
@@ -92,6 +101,7 @@ componentDidMount() {
             </div>
           </div>
         </div>
+        <button className="btn btn-primary" onClick={this.logOut}>Log Out</button>
       </div>
     );
   }

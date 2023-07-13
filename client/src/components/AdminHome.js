@@ -23,6 +23,11 @@ export default class AdminHome extends Component {
         }
     };
 
+    logOut = () => {
+        window.localStorage.clear();
+        window.location.href = "./sign-in";
+      };
+
     render() {
         const { users } = this.state;
 
@@ -33,23 +38,24 @@ export default class AdminHome extends Component {
             <table className="table table-striped">
                 <thead className="thead-dark">
                     <tr>
-                        <th style={{ fontSize: "12px" }}>First Name</th>
-                        <th style={{ fontSize: "12px" }}>Last Name</th>
+                        <th style={{ fontSize: "12px" }}>Name</th>                        
                         <th style={{ fontSize: "12px" }}>Email</th>
                         <th style={{ fontSize: "12px" }}>Mobile</th>
+                        <th style={{ fontSize: "12px" }}>User Type</th>
                     </tr>
                 </thead>
                 <tbody>
                     {users.map((user) => (
                         <tr key={user._id}>
-                            <td style={{ fontSize: "12px" }}>{user.fname}</td>
-                            <td style={{ fontSize: "12px" }}>{user.lname}</td>
+                            <td style={{ fontSize: "12px" }}>{user.name}</td>                           
                             <td style={{ fontSize: "12px" }}>{user.email}</td>
                             <td style={{ fontSize: "12px" }}>{user.mobile}</td>
+                            <td style={{ fontSize: "12px" }}>{user.userType}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            <button className="btn btn-primary" onClick={this.logOut}>Log Out</button>
         </div>
         );
     }

@@ -34,7 +34,10 @@ export default class FuelStationHome extends Component {
         }
       });
   }
-
+  logOut = () => {
+    window.localStorage.clear();
+    window.location.href = "./sign-in";
+  };
   render() {
     const { userData } = this.state;
 
@@ -99,6 +102,7 @@ export default class FuelStationHome extends Component {
             </div>
           </div>
         </div>
+        <button className="btn btn-primary" onClick={this.logOut}>Log Out</button>
       </div>
     );
   }

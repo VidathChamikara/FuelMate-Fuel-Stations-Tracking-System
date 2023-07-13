@@ -39,21 +39,30 @@ class LocationForm extends Component {
   handleSubmit = async (e) => {
     e.preventDefault();
     const { latitude, longitude, currentDateTime, locationName } = this.state;
-
+  
     try {
-      await axios.post("http://localhost:5000/location", {
+      const response = await axios.post("http://localhost:5000/location", {
+        token: window.localStorage.getItem('token'),
         latitude,
         longitude,
         currentDateTime,
         locationName,
       });
-      alert("Location stored successfully or already added.");
-      window.location.href = "./locationMap";
+  
+      if (response.data.status === "Location Exists") {
+        alert("Location Exists");
+      } else if (response.data.status === "ok") {
+        alert("Successfully Added Location");
+        window.location.href = "./locationMap";
+      } else {
+        alert("Error storing location.");
+      }
     } catch (error) {
       console.error("Error storing location:", error);
       alert("Error storing location.");
     }
   };
+  
 
   render() {
     const currentDateTime = format(new Date(), "MMMM dd, yyyy - HH:mm:ss");

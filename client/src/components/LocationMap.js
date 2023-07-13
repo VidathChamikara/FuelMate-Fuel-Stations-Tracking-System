@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-
-
 const LocationMap = () => {
-  const [locations, setLocations] = useState({ status: "ok", data: [] });
+  const [locations, setLocations] = useState([]);
   const [activeTab, setActiveTab] = useState('map');
 
   useEffect(() => {
@@ -13,18 +11,45 @@ const LocationMap = () => {
 
   const fetchLocations = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/getAllLocation');
-      setLocations(response.data.data);
-      console.log(response.data.data);
+      const token = window.localStorage.getItem('token');
+      const response = await axios.post('http://localhost:5000/getAllLocation', { token });
+      const data = response.data;
+
+      if (data.data === 'token expired') {
+        alert('Token expired. Please log in again.');
+        window.localStorage.clear();
+      } else {
+        setLocations(data.data);
+      }
     } catch (error) {
       console.error('Error fetching locations:', error);
+    }
+  };
+
+  const deleteLocation = async (locationId) => {
+    try {
+      const token = window.localStorage.getItem('token');
+      const response = await axios.delete(`http://localhost:5000/location/${locationId}`, {
+        data: { token },
+      });
+      const data = response.data;
+
+      if (data.status === 'ok') {
+        alert('Location deleted successfully');
+        window.location.href = "./locationForm";
+      } else {
+        alert('Failed to delete location');
+      }
+    } catch (error) {
+      console.error('Error deleting location:', error);
     }
   };
 
   const renderMap = () => {
     // Load the Google Maps API asynchronously
     const script = document.createElement('script');
-    script.src =  'https://maps.googleapis.com/maps/api/js?key=AIzaSyAOqrItiQtWOcaaNQbtRyVPYlsFuAwV9n0';
+    script.src =
+    'https://maps.googleapis.com/maps/api/js?key=AIzaSyAOqrItiQtWOcaaNQbtRyVPYlsFuAwV9n0'; // Replace YOUR_API_KEY with your actual API key
     script.async = true;
     script.onload = () => {
       const map = new window.google.maps.Map(document.getElementById('map'), {
@@ -34,11 +59,29 @@ const LocationMap = () => {
 
       if (Array.isArray(locations)) {
         locations.forEach((location) => {
+          const markerIcon = {
+            path: window.google.maps.SymbolPath.CIRCLE,
+            fillColor: 'blue',
+            fillOpacity: 1,
+            strokeWeight: 0,
+            scale: 7,
+          };
           const marker = new window.google.maps.Marker({
             position: { lat: location.latitude, lng: location.longitude },
             map,
             title: 'My Location',
+            icon: markerIcon,
           });
+          // Create an InfoWindow with a text field
+        const infoWindow = new window.google.maps.InfoWindow({
+          content: '<h6>My Location</h6>', // Replace with your desired text or HTML content
+        });
+
+        // Show the InfoWindow when marker is clicked
+        marker.addListener('click', () => {
+          infoWindow.open(map, marker);
+        });
+        infoWindow.open(map, marker);
         });
       }
     };
@@ -59,12 +102,12 @@ const LocationMap = () => {
     } else if (activeTab === 'table') {
       if (Array.isArray(locations)) {
         return (
-          <table  class="table table-striped table-bordered">
-            <thead class="thead-dark">
+          <table className="table table-striped table-bordered">
+            <thead className="thead-dark">
               <tr>
                 <th>Date & Time</th>
                 <th>Location Name</th>
-                
+                <th>Actions</th> {/* Added Actions column */}
               </tr>
             </thead>
             <tbody>
@@ -72,7 +115,9 @@ const LocationMap = () => {
                 <tr key={location._id}>
                   <td>{location.currentDateTime}</td>
                   <td>{location.locationName}</td>
-                  
+                  <td>
+                    <button className="btn btn-danger"onClick={() => deleteLocation(location._id)}>Delete</button>
+                  </td> {/* Added delete button */}
                 </tr>
               ))}
             </tbody>
@@ -115,4 +160,3 @@ const LocationMap = () => {
 };
 
 export default LocationMap;
-

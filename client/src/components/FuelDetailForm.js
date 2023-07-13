@@ -61,10 +61,13 @@ export default class FuelDetails extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data, 'Data pass to API');
-      });
-
-    alert('Succesfully Added');
-    window.location.reload();
+        if (data.status === "Already Added Data") {
+          alert("Already Added Data");
+        } else if (data.status === "ok") {
+          alert("Successfully Sign Up");
+        }
+        window.location.reload();
+      });  
   }
 
   renderForm() {

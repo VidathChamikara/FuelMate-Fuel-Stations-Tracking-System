@@ -1,10 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const FuelDetailsModal = ({ fuelDetails, onClose }) => {
+  return (
+    <div className="modal" style={{ display: 'block' }}>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Fuel Details</h5>
+            <button type="button" className="close" onClick={onClose}>
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div className="modal-body">
+            <p><strong>nDesel:</strong> {fuelDetails.nDesel}</p>
+            <p><strong>sDesel:</strong> {fuelDetails.sDesel}</p>
+            <p><strong>nPetrol:</strong> {fuelDetails.nPetrol}</p>
+            <p><strong>sPetrol:</strong> {fuelDetails.sPetrol}</p>
+          </div>
+          <div className="modal-footer">
+            <button type="button" className="btn btn-primary" onClick={onClose}>Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const LocationMap = () => {
   const [locations, setLocations] = useState([]);
   const [stationLocations, setStationLocations] = useState([]);
   const [activeTab, setActiveTab] = useState('map');
+  const [selectedFuelDetails, setSelectedFuelDetails] = useState(null);
 
   useEffect(() => {
     fetchMyLocations();
@@ -118,6 +145,25 @@ const LocationMap = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
+  const handleViewFuelDetails = async (userId) => {
+    try {
+      const response = await axios.post('http://localhost:5000/fuelDetail', { userId: userId });
+      const data = response.data;
+  
+      if (data.status === 'ok') {
+        // Display the fuel details, e.g., in a modal or a separate component
+        console.log(data.data); // Replace with the code to show the fuel details
+        setSelectedFuelDetails(data.data);
+      } else {
+        console.error('Error fetching fuel details:', data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching fuel details:', error);
+    }
+  };
+  const handleCloseModal = () => {
+    setSelectedFuelDetails(null);
+  };
 
   const renderContent = () => {
     if (activeTab === 'map') {
@@ -137,7 +183,7 @@ const LocationMap = () => {
                 <tr key={location._id}>
                   <td>{location.locationName}</td>
                   <td>
-                    <button className="btn btn-success"/*</td>onClick={() => viewFuelDetails(location.userId)}*/>View</button>
+                    <button className="btn btn-success" onClick={() => handleViewFuelDetails(location.userId)}>View</button>
                   </td> {/* Added delete button */}
                 </tr>
               ))}
@@ -173,6 +219,9 @@ const LocationMap = () => {
         </ul>
       </nav>
       {renderContent()}
+      {selectedFuelDetails && (
+        <FuelDetailsModal fuelDetails={selectedFuelDetails} onClose={handleCloseModal} />
+      )}
       <p className="forgot-password text-right">
         <a href="/userHome">Back To Home</a>
       </p>

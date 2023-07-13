@@ -119,6 +119,16 @@ mongoose
       res.send({ status: "error", data: error.message });
     }
   });
+
+  app.post("/fuelDetail", async (req, res) => {
+    const {  userId }=req.body;  
+    try {         
+      const fuelDetails = await Fuel.findOne({  userId }).collation({});
+      res.send({ status: "ok", data: fuelDetails });
+    } catch (error) {
+      res.send({ status: "error", data: error.message });
+    }
+  });
   
    //StationLocation
 require("./stationLocation");

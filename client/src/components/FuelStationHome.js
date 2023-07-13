@@ -92,7 +92,7 @@ export default class FuelStationHome extends Component {
               }}
             >
               <div className="card-body text-center">
-                <a href="">
+                <a href="/stationLocationForm">
                   <div className="circle-image">
                     <img src={station} alt="Card 2" />
                   </div>

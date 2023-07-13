@@ -120,7 +120,74 @@ mongoose
     }
   });
   
+   //StationLocation
+require("./stationLocation");
+const stationLocation = mongoose.model("stationLocationInfo");
+app.post("/stationLocation", async (req, res) => {
+  const { token, latitude, longitude, currentDateTime, locationName } = req.body;
+  try {
 
+    const user = jwt.verify(token, JWT_SECRET);
+      
+      const { email } = user;
+      
+      const fuelStationUser = await User.findOne({ email }).collation({});
+      
+      if (!fuelStationUser) {
+        return res.send({ status: "error", data: "Fuel station  not found" });
+      }
+
+    const oldLocation = await stationLocation.findOne({  userId: fuelStationUser._id,latitude,longitude }).collation({});
+
+    if (oldLocation) {
+      return res.send({ status: "Location Exists" });
+    }
+    stationLocation.create({
+      userId: fuelStationUser._id,
+      latitude,
+      longitude,
+      currentDateTime,
+      locationName,
+    });
+    res.send({ status: "ok" });
+  } catch (error) {
+    res.send({ status: "error" });
+  }
+});
+
+app.post("/getStationLocation", async (req, res) => {
+  const { token }=req.body;
+  try {
+    const user = jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+      if (err) {
+        return "token expired";
+      }
+      return decodedToken;
+    });
+
+    if (user === "token expired") {
+      return res.send({ status: "error", data: "token expired" });
+    }
+    const { email } = user;
+
+    const fuelStationUser = await User.findOne({ email }).collation({});
+    if (!fuelStationUser) {
+      return res.send({ status: "error", data: "Fuel station user not found" });
+    }
+    const allLocation = await stationLocation.find({ userId: fuelStationUser._id }).collation({});
+    res.send({ status: "ok", data: allLocation });
+  } catch (error) {
+    console.log(error);
+  }
+});
+app.get("/getAllFuelStationLocation", async (req, res) => {
+  try {
+    const allStation = await stationLocation.find({}).collation({});
+    res.send({ status: "ok", data: allStation });
+  } catch (error) {
+    console.log(error);
+  }
+});
   //User Methods
 
   require("./userDetails");
@@ -160,6 +227,7 @@ mongoose
     }
   });
 
+ 
   //UserLocation
 
 require("./myLocation");
@@ -181,7 +249,7 @@ app.post("/location", async (req, res) => {
     const oldLocation = await Location.findOne({  userId: fuelStationUser._id,latitude,longitude }).collation({});
 
     if (oldLocation) {
-      return res.send({ status: "Location Exists" });
+      return res.send({ status: "Current Location Exists" });
     }
     Location.create({
       userId: fuelStationUser._id,

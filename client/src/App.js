@@ -15,6 +15,7 @@ import LocationMap from "./components/LocationMap";
 //FuelStation
 import FuelStationHome from "./components/FuelStationHome";
 import FuelDetails from "./components/FuelDetailForm";
+import StationLocationForm from "./components/stationLocationForm";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
 
               <Route path="/fuelStationHome" element={< FuelStationHome />} />
               <Route path="/fuelDetails" element={< FuelDetails />} />
+              <Route path="/stationLocationForm" element={< StationLocationForm />} />
             </Routes>
           </div>
         </div>

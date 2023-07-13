@@ -3,13 +3,15 @@ import axios from 'axios';
 
 const LocationMap = () => {
   const [locations, setLocations] = useState([]);
+  const [stationLocations, setStationLocations] = useState([]);
   const [activeTab, setActiveTab] = useState('map');
 
   useEffect(() => {
-    fetchLocations();
+    fetchMyLocations();
+    fetchStationLocations();
   }, []);
 
-  const fetchLocations = async () => {
+  const fetchMyLocations = async () => {
     try {
       const token = window.localStorage.getItem('token');
       const response = await axios.post('http://localhost:5000/getAllLocation', { token });
@@ -26,25 +28,18 @@ const LocationMap = () => {
     }
   };
 
-  const deleteLocation = async (locationId) => {
+  const fetchStationLocations = async () => {
     try {
-      const token = window.localStorage.getItem('token');
-      const response = await axios.delete(`http://localhost:5000/location/${locationId}`, {
-        data: { token },
-      });
-      const data = response.data;
-
-      if (data.status === 'ok') {
-        alert('Location deleted successfully');
-        window.location.href = "./locationForm";
-      } else {
-        alert('Failed to delete location');
-      }
+      
+      const response = await axios.get('http://localhost:5000/getAllFuelStationLocation');
+      const data = response.data;    
+      setStationLocations(data.data);      
     } catch (error) {
-      console.error('Error deleting location:', error);
+      console.error('Error fetching locations:', error);
     }
   };
 
+ 
   const renderMap = () => {
     // Load the Google Maps API asynchronously
     const script = document.createElement('script');
@@ -84,13 +79,41 @@ const LocationMap = () => {
         infoWindow.open(map, marker);
         });
       }
+
+      if (Array.isArray(stationLocations)) {
+        stationLocations.forEach((stationLocation) => {
+          const stationMarkerIcon = {
+            path: window.google.maps.SymbolPath.CIRCLE,
+            fillColor: 'red',
+            fillOpacity: 1,
+            strokeWeight: 0,
+            scale: 7,
+          };
+          const stationMarker = new window.google.maps.Marker({
+            position: { lat: stationLocation.latitude, lng: stationLocation.longitude },
+            map,
+            title: 'Fuel Station',
+            icon: stationMarkerIcon,
+          });
+          // Create an InfoWindow with a text field for fuel station
+          const stationInfoWindow = new window.google.maps.InfoWindow({
+            content: `<h6>${stationLocation.locationName}</h6>`, // Replace with your desired text or HTML content
+          });
+  
+          // Show the InfoWindow when station marker is clicked
+          stationMarker.addListener('click', () => {
+            stationInfoWindow.open(map, stationMarker);
+          });
+          stationInfoWindow.open(map, stationMarker);
+        });
+      }
     };
     document.body.appendChild(script);
   };
 
   useEffect(() => {
     renderMap();
-  }, [locations]);
+  }, [locations, stationLocations]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -100,23 +123,21 @@ const LocationMap = () => {
     if (activeTab === 'map') {
       return <div id="map" style={{ height: '400px', width: '100%' }} />;
     } else if (activeTab === 'table') {
-      if (Array.isArray(locations)) {
+      if (Array.isArray(stationLocations)) {
         return (
           <table className="table table-striped table-bordered">
             <thead className="thead-dark">
-              <tr>
-                <th>Date & Time</th>
-                <th>Location Name</th>
+              <tr>                
+                <th>Fuel Station Name</th>
                 <th>Actions</th> {/* Added Actions column */}
               </tr>
             </thead>
             <tbody>
-              {locations.map((location) => (
+              {stationLocations.map((location) => (
                 <tr key={location._id}>
-                  <td>{location.currentDateTime}</td>
                   <td>{location.locationName}</td>
                   <td>
-                    <button className="btn btn-danger"onClick={() => deleteLocation(location._id)}>Delete</button>
+                    <button className="btn btn-success"/*</td>onClick={() => viewFuelDetails(location.userId)}*/>View</button>
                   </td> {/* Added delete button */}
                 </tr>
               ))}
@@ -146,7 +167,7 @@ const LocationMap = () => {
               className={`nav-link ${activeTab === 'table' ? 'active' : ''}`}
               onClick={() => handleTabChange('table')}
             >
-              Table
+              Fuel Stations Table
             </button>
           </li>
         </ul>

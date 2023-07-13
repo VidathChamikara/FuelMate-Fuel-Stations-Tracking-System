@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 
-class LocationForm extends Component {
+class StationLocationForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -10,7 +10,7 @@ class LocationForm extends Component {
       longitude: null,
       error: null,
       currentDateTime: "",
-      locationName: "",
+      locationName:"",
       allLocations: [], // Added state for storing all locations
     };
   }
@@ -30,14 +30,13 @@ class LocationForm extends Component {
     } else {
       this.setState({ error: "Geolocation is not supported by this browser." });
     }
-
     // Fetch all locations
     this.getAllLocations();
   }
 
   getAllLocations = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/getAllLocation", {
+      const response = await axios.post("http://localhost:5000/getStationLocation", {
         token: window.localStorage.getItem("token"),
       });
 
@@ -54,55 +53,41 @@ class LocationForm extends Component {
   handleLocationNameChange = (e) => {
     this.setState({ locationName: e.target.value });
   };
+  
 
   handleSubmit = async (e) => {
     e.preventDefault();
     const { latitude, longitude, currentDateTime, locationName } = this.state;
-
+  
     try {
-      const response = await axios.post("http://localhost:5000/location", {
-        token: window.localStorage.getItem("token"),
+      const response = await axios.post("http://localhost:5000/stationLocation", {
+        token: window.localStorage.getItem('token'),
         latitude,
         longitude,
         currentDateTime,
         locationName,
       });
-
-      if (response.data.status === "Current Location Exists") {
-        alert("Cuurent Location Exists");
-        window.location.href = "./locationMap";
+  
+      if (response.data.status === "Location Exists") {
+        alert("Fuel Station Location Exists");
       } else if (response.data.status === "ok") {
         alert("Successfully Added Location");
-        window.location.href = "./locationMap";
+       
       } else {
         alert("Error storing location.");
       }
+       window.location.href = "./stationLocationForm";
     } catch (error) {
       console.error("Error storing location:", error);
       alert("Error storing location.");
     }
   };
-  deleteLocation = async (locationId) => {
-    try {
-      const token = window.localStorage.getItem('token');
-      const response = await axios.delete(`http://localhost:5000/location/${locationId}`, {
-        data: { token },
-      });
-      const data = response.data;
+  
 
-      if (data.status === 'ok') {
-        alert('Location deleted successfully');
-        window.location.href = "./locationForm";
-      } else {
-        alert('Failed to delete location');
-      }
-    } catch (error) {
-      console.error('Error deleting location:', error);
-    }
-  };
   render() {
     const currentDateTime = format(new Date(), "MMMM dd, yyyy - HH:mm:ss");
     const { latitude, longitude, error, locationName, allLocations } = this.state;
+   
 
     if (error) {
       return <p>Error: {error}</p>;
@@ -121,24 +106,21 @@ class LocationForm extends Component {
             <strong>Longitude:</strong> {longitude}
           </p>
           <form onSubmit={this.handleSubmit}>
-            <div className="mb-3">
-              <label htmlFor="locationName" className="form-label">
-                Location Name:
-              </label>
-              <input
-                type="text"
-                id="locationName"
-                value={locationName}
-                onChange={this.handleLocationNameChange}
-                className="form-control"
-              />
-            </div>
+          <div  className="mb-3">
+            <label htmlFor="locationName" className="form-label">Fuel Station Name:</label>
+            <input
+              type="text"
+              id="locationName"
+              value={locationName}
+              onChange={this.handleLocationNameChange}
+              className="form-control"
+            />
+          </div>
             <button className="btn btn-outline-primary" type="submit">
-              Add Your Current Location
+              Add  Fuel Station Location
             </button>
-            
+           
           </form>
-
           {allLocations.length > 0 && (
             <div>
               
@@ -147,7 +129,7 @@ class LocationForm extends Component {
               <table  className="table table-striped table-bordered">
                 <thead className="thead-dark">
                   <tr>
-                    <th>Location Name</th>
+                    <th>Name</th>
                     <th>Latitude</th>
                     <th>Longitude</th>
                     <th>Actions</th>
@@ -168,9 +150,9 @@ class LocationForm extends Component {
               </table>
             </div>
           )}
-          <p className="forgot-password text-right">
-              <a href="/userHome">Back To Home</a>
-            </p>
+           <p className="forgot-password text-right">
+          <a href="/fuelStationHome">Back To Home</a>
+        </p>
         </div>
       );
     }
@@ -179,4 +161,4 @@ class LocationForm extends Component {
   }
 }
 
-export default LocationForm;
+export default StationLocationForm;

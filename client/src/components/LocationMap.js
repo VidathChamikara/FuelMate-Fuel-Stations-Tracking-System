@@ -130,6 +130,7 @@ const LocationMap = () => {
           // Show the InfoWindow when station marker is clicked
           stationMarker.addListener('click', () => {
             stationInfoWindow.open(map, stationMarker);
+            handleViewFuelDetails(stationLocation.userId);
           });
           stationInfoWindow.open(map, stationMarker);
         });

@@ -3,6 +3,7 @@
 ![signup](https://github.com/VidathChamikara/FuelMate-Fuel-Stations-Tracking-System/assets/86880920/a092298e-aeed-4ac6-abf7-2a9d6a866ea8)
 ![forgotPassword](https://github.com/VidathChamikara/FuelMate-Fuel-Stations-Tracking-System/assets/86880920/910004af-9c11-461d-b74e-c4a90819a56b)
 ![FuelStationHome](https://github.com/VidathChamikara/FuelMate-Fuel-Stations-Tracking-System/assets/86880920/911f9c42-4efe-4cab-be24-1610743c822f)
+![LocationAddForm](https://github.com/VidathChamikara/FuelMate-Fuel-Stations-Tracking-System/assets/86880920/29b079f4-3133-416c-9175-06441fba7fb8)
 ![Dashboard](https://github.com/VidathChamikara/FuelMate-Fuel-Stations-Tracking-System/assets/86880920/5168bfa1-ee8a-482f-ae1a-0b8d5bfaba4b)
 ![FuelDetailsForm](https://github.com/VidathChamikara/FuelMate-Fuel-Stations-Tracking-System/assets/86880920/43b36f33-e547-4e7e-b37f-7edae375b965)
 ![UserHome](https://github.com/VidathChamikara/FuelMate-Fuel-Stations-Tracking-System/assets/86880920/ec61d799-5e47-43a4-b992-c23a70d2aa8e)

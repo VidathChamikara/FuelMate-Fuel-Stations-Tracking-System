@@ -197,6 +197,47 @@ app.get("/getAllFuelStationLocation", async (req, res) => {
     console.log(error);
   }
 });
+
+app.delete("/deleteStationLocation/:id", async (req, res) => {
+  const { token } = req.body;
+  const locationId = req.params.id;
+
+  try {
+    const user = jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+      if (err) {
+        return "token expired";
+      }
+      return decodedToken;
+    });
+
+    if (user === "token expired") {
+      return res.send({ status: "error", data: "token expired" });
+    }
+
+    const { email } = user;
+
+    const fuelStationUser = await User.findOne({ email }).collation({});
+    if (!fuelStationUser) {
+      return res.send({ status: "error", data: "Fuel station user not found" });
+    }
+
+    const location = await stationLocation.findById(locationId).collation({});
+    if (!location) {
+      return res.send({ status: "error", data: "Location not found" });
+    }
+
+    if (location.userId.toString() !== fuelStationUser._id.toString()) {
+      return res.send({ status: "error", data: "Unauthorized to delete this location" });
+    }
+
+    await stationLocation.findByIdAndDelete(locationId).collation({});
+
+    res.send({ status: "ok", data: "Location deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.send({ status: "error", data: "An error occurred" });
+  }
+});
   //User Methods
 
   require("./userDetails");

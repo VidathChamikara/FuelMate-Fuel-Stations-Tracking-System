@@ -82,7 +82,24 @@ class StationLocationForm extends Component {
       alert("Error storing location.");
     }
   };
-  
+  deleteLocation = async (locationId) => {
+    try {
+      const token = window.localStorage.getItem('token');
+      const response = await axios.delete(`http://localhost:5000/deleteStationLocation/${locationId}`, {
+        data: { token },
+      });
+      const data = response.data;
+
+      if (data.status === 'ok') {
+        alert('Location deleted successfully');
+        window.location.href = "./locationForm";
+      } else {
+        alert('Failed to delete location');
+      }
+    } catch (error) {
+      console.error('Error deleting location:', error);
+    }
+  };
 
   render() {
     const currentDateTime = format(new Date(), "MMMM dd, yyyy - HH:mm:ss");

@@ -24,37 +24,7 @@ mongoose
   .catch((e) => console.log(e));
 
   //fuelStation methods(Chamudi)
-
-  require("./FuelStationDetails");
-  const FuelStation = mongoose.model("FuelStationInfo");
-  
-  app.post("/fuel-station/register", async (req, res) => {
-    const { fuelStationName, ownerName, email, password, locationName, mobile, latitude,  longitude, userType } = req.body;
-  
-    const encryptedPassword = await bcrypt.hash(password, 10);
-    try {
-      const oldUser = await FuelStation.findOne({ email }).collation({}); // Check for existing Fuel Station
-  
-      if (oldUser) {
-        return res.json({ error: "Fuel Station Exists" });
-      }
-      await FuelStation.create({
-        fuelStationName,
-        ownerName,
-        email,
-        password: encryptedPassword,
-        locationName,
-        mobile,
-        latitude,
-        longitude,
-        userType,
-      });
-      res.send({ status: "ok" });
-    } catch (error) {
-      res.send({ status: "error" });
-    }
-  });
-  
+   
   require("./FuelDetails");
   const Fuel = mongoose.model("FuelInfo");
   app.post("/fuel", async (req, res) => {
@@ -71,7 +41,7 @@ mongoose
         return res.send({ status: "error", data: "Fuel station user not found" });
       }
 
-      const oldData = await Fuel.findOne({ fuelStationUser }).collation({});
+      const oldData = await Fuel.findOne({  userId: fuelStationUser._id }).collation({});
   
       if (oldData) {
         return res.send({ status: "Already Added Data" });
@@ -129,8 +99,37 @@ mongoose
       res.send({ status: "error", data: error.message });
     }
   });
+
+  app.put("/fuelUpdate", async (req, res) => {
+    const { token, fuelDetails } = req.body;
   
-   //StationLocation
+    try {
+      const user = jwt.verify(token, JWT_SECRET);
+  
+      const { email } = user;
+  
+      const fuelStationUser = await User.findOne({ email }).collation({});
+  
+      if (!fuelStationUser) {
+        return res.send({ status: "error", data: "Fuel station user not found" });
+      }
+  
+      const existingData = await Fuel.findOne({ userId: fuelStationUser._id }).collation({});
+  
+      if (!existingData) {
+        return res.send({ status: "error", data: "Fuel details not found" });
+      }
+  
+      await Fuel.updateOne({ userId: fuelStationUser._id }, fuelDetails).collation({});
+  
+      res.send({ status: "ok" });
+    } catch (error) {
+      res.send({ status: "error", data: error.message });
+    }
+  });
+  
+  
+   //StationLocation(Chamudi)
 require("./stationLocation");
 const stationLocation = mongoose.model("stationLocationInfo");
 app.post("/stationLocation", async (req, res) => {

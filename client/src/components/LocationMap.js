@@ -3,21 +3,52 @@ import axios from 'axios';
 
 const FuelDetailsModal = ({ fuelDetails, onClose }) => {
   return (
-    <div className="modal" style={{ display: 'block' }}>
-      <div className="modal-dialog">
+    <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 9999, animation: 'slide-down 0.9s ease-out' }}>
+      <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Fuel Details</h5>
-            <button type="button" className="close" onClick={onClose}>
-              <span aria-hidden="true">&times;</span>
+            <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={onClose}>
+              <span aria-hidden="true" style={{ color: '#fff' }}>&times;</span>
             </button>
           </div>
           <div className="modal-body">
-            <p><strong>nDesel:</strong> {fuelDetails.nDesel}</p>
-            <p><strong>sDesel:</strong> {fuelDetails.sDesel}</p>
-            <p><strong>nPetrol:</strong> {fuelDetails.nPetrol}</p>
-            <p><strong>sPetrol:</strong> {fuelDetails.sPetrol}</p>
+          <div className="row">
+        <div className="col-md-6 mb-4">
+          <div className="card" style={{backgroundColor: "#D3D3D3",}}>
+            <div className="card-body">
+              <h5 className="card-title">Normal Desel</h5>
+              <p className="card-text">Quantity: {fuelDetails.nDesel} liters</p>
+            </div>
           </div>
+        </div>
+        <div className="col-md-6 mb-4">
+          <div className="card" style={{backgroundColor: "#D3D3D3",}}>
+            <div className="card-body">
+              <h5 className="card-title">Super Desel</h5>
+              <p className="card-text">Quantity: {fuelDetails.sDesel} liters</p>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6 mb-4">
+          <div className="card" style={{backgroundColor: "#D3D3D3",}}>
+            <div className="card-body">
+              <h5 className="card-title">NormalPetrol</h5>
+              <p className="card-text">Quantity: {fuelDetails.nPetrol} liters</p>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6 mb-4">
+          <div className="card" style={{backgroundColor: "#D3D3D3",}}>
+            <div className="card-body">
+              <h5 className="card-title">Super Petrol</h5>
+              <p className="card-text">Quantity:  {fuelDetails.sPetrol} liters</p>
+            </div>
+          </div>
+        </div>
+          </div>
+         
+      </div>
           <div className="modal-footer">
             <button type="button" className="btn btn-primary" onClick={onClose}>Close</button>
           </div>
@@ -25,6 +56,8 @@ const FuelDetailsModal = ({ fuelDetails, onClose }) => {
       </div>
     </div>
   );
+  
+  
 };
 
 const LocationMap = () => {
@@ -221,7 +254,8 @@ const LocationMap = () => {
       </nav>
       {renderContent()}
       {selectedFuelDetails && (
-        <FuelDetailsModal fuelDetails={selectedFuelDetails} onClose={handleCloseModal} />
+        // eslint-disable-next-line no-restricted-globals
+        <FuelDetailsModal fuelDetails={selectedFuelDetails} locationName={location.locationName} onClose={handleCloseModal} />
       )}
       <p className="forgot-password text-right">
         <a href="/userHome">Back To Home</a>

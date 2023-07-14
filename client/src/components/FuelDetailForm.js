@@ -10,6 +10,7 @@ export default class FuelDetails extends Component {
       sPetrol: 0,
       activeTab: 'dashboard',
       fuelDetails: "", // Added state for fuelDetails
+      editMode: false, // Add the editMode state variable
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -64,7 +65,7 @@ export default class FuelDetails extends Component {
         if (data.status === "Already Added Data") {
           alert("Already Added Data");
         } else if (data.status === "ok") {
-          alert("Successfully Sign Up");
+          alert("Successfully Added");
         }
         window.location.reload();
       });  
@@ -127,51 +128,234 @@ export default class FuelDetails extends Component {
   }
 
   renderFuelDetails() {
-    const { fuelDetails } = this.state;
-
-  // Check if fuelDetails is empty or not
-  if (fuelDetails.length === 0) {
-    return <div>Not Added Data....</div>; // or display a loading message
+    const { fuelDetails, editMode } = this.state;
+  
+    // Check if fuelDetails is empty or not
+    if (fuelDetails.length === 0) {
+      return <div>Not Added Data....</div>; // or display a loading message
+    }
+  
+    const data = fuelDetails[0];
+  
+    const handleEdit = () => {
+      this.setState({ editMode: true });
+    };
+  
+    const handleCancel = () => {
+      this.setState({ editMode: false });
+    };
+  
+    const handleUpdate = () => {
+      const { nDesel, sDesel, nPetrol, sPetrol } = data;
+      // Perform update API call using the updated values
+      fetch('http://localhost:5000/fuelUpdate', {
+        method: 'PUT', // Assuming the API uses PUT method for updating fuel details
+        crossDomain: true,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({
+          token: window.localStorage.getItem('token'),
+          fuelDetails: { nDesel, sDesel, nPetrol, sPetrol },
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data, 'Data updated');
+          if (data.status === 'ok') {
+            alert('Fuel details updated successfully');
+            this.setState({ editMode: false });
+          } else {
+            alert('Failed to update fuel details');
+          }
+        })
+        .catch((error) => {
+          console.error('Error updating fuel details:', error);
+          alert('An error occurred while updating fuel details');
+        });
+    };
+  
+    const renderFuelCard = () => {
+      return (
+        <div className="row">
+          <div className="col-md-6 mb-4">
+            <div className="card" style={{ backgroundColor: '#D3D3D3' }}>
+              <div className="card-body">
+                <h5 className="card-title">Normal Diesel</h5>
+                {editMode ? (
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Normal Diesel Quantity"
+                    value={data.nDesel}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      this.setState((prevState) => ({
+                        fuelDetails: [
+                          {
+                            ...prevState.fuelDetails[0],
+                            nDesel: value,
+                          },
+                        ],
+                      }));
+                    }}
+                  />
+                ) : (
+                  <p className="card-text">Quantity: {data.nDesel} liters</p>
+                )}
+                {editMode ? (
+                  <div className="d-flex justify-content-between mt-3">
+                    <button className="btn btn-primary" onClick={handleUpdate}>
+                      Update
+                    </button>
+                    <button className="btn btn-secondary" onClick={handleCancel}>
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button className="btn btn-primary" onClick={handleEdit}>
+                    Edit
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6 mb-4">
+            <div className="card" style={{ backgroundColor: '#D3D3D3' }}>
+              <div className="card-body">
+                <h5 className="card-title">Super Diesel</h5>
+                {editMode ? (
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Super Diesel Quantity"
+                    value={data.sDesel}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      this.setState((prevState) => ({
+                        fuelDetails: [
+                          {
+                            ...prevState.fuelDetails[0],
+                            sDesel: value,
+                          },
+                        ],
+                      }));
+                    }}
+                  />
+                ) : (
+                  <p className="card-text">Quantity: {data.sDesel} liters</p>
+                )}
+                {editMode ? (
+                  <div className="d-flex justify-content-between mt-3">
+                    <button className="btn btn-primary" onClick={handleUpdate}>
+                      Update
+                    </button>
+                    <button className="btn btn-secondary" onClick={handleCancel}>
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button className="btn btn-primary" onClick={handleEdit}>
+                    Edit
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6 mb-4">
+            <div className="card" style={{ backgroundColor: '#D3D3D3' }}>
+              <div className="card-body">
+                <h5 className="card-title">Normal Petrol</h5>
+                {editMode ? (
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Normal Petrol Quantity"
+                    value={data.nPetrol}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      this.setState((prevState) => ({
+                        fuelDetails: [
+                          {
+                            ...prevState.fuelDetails[0],
+                            nPetrol: value,
+                          },
+                        ],
+                      }));
+                    }}
+                  />
+                ) : (
+                  <p className="card-text">Quantity: {data.nPetrol} liters</p>
+                )}
+                {editMode ? (
+                  <div className="d-flex justify-content-between mt-3">
+                    <button className="btn btn-primary" onClick={handleUpdate}>
+                      Update
+                    </button>
+                    <button className="btn btn-secondary" onClick={handleCancel}>
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button className="btn btn-primary" onClick={handleEdit}>
+                    Edit
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6 mb-4">
+            <div className="card" style={{ backgroundColor: '#D3D3D3' }}>
+              <div className="card-body">
+                <h5 className="card-title">Super Petrol</h5>
+                {editMode ? (
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="Super Petrol Quantity"
+                    value={data.sPetrol}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      this.setState((prevState) => ({
+                        fuelDetails: [
+                          {
+                            ...prevState.fuelDetails[0],
+                            sPetrol: value,
+                          },
+                        ],
+                      }));
+                    }}
+                  />
+                ) : (
+                  <p className="card-text">Quantity: {data.sPetrol} liters</p>
+                )}
+                {editMode ? (
+                  <div className="d-flex justify-content-between mt-3">
+                    <button className="btn btn-primary" onClick={handleUpdate}>
+                      Update
+                    </button>
+                    <button className="btn btn-secondary" onClick={handleCancel}>
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button className="btn btn-primary" onClick={handleEdit}>
+                    Edit
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+          {/* Render other fuel cards similarly */}
+        </div>
+      );
+    };
+  
+    return renderFuelCard();
   }
-
-  const data = fuelDetails[0];
-    return (
-      <div className="row">
-        <div className="col-md-6 mb-4">
-          <div className="card" style={{backgroundColor: "#D3D3D3",}}>
-            <div className="card-body">
-              <h5 className="card-title">Normal Desel</h5>
-              <p className="card-text">Quantity: {data.nDesel} liters</p>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-6 mb-4">
-          <div className="card" style={{backgroundColor: "#D3D3D3",}}>
-            <div className="card-body">
-              <h5 className="card-title">Super Desel</h5>
-              <p className="card-text">Quantity: {data.sDesel} liters</p>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-6 mb-4">
-          <div className="card" style={{backgroundColor: "#D3D3D3",}}>
-            <div className="card-body">
-              <h5 className="card-title">NormalPetrol</h5>
-              <p className="card-text">Quantity: {data.nPetrol} liters</p>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-6 mb-4">
-          <div className="card" style={{backgroundColor: "#D3D3D3",}}>
-            <div className="card-body">
-              <h5 className="card-title">Super Petrol</h5>
-              <p className="card-text">Quantity:  {data.sPetrol} liters</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  
   
 
   render() {

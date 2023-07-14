@@ -141,7 +141,7 @@ export default class FuelDetails extends Component {
           <div className="card" style={{backgroundColor: "#D3D3D3",}}>
             <div className="card-body">
               <h5 className="card-title">Normal Desel</h5>
-              <p className="card-text">Quantity: {data.nDesel}</p>
+              <p className="card-text">Quantity: {data.nDesel} liters</p>
             </div>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default class FuelDetails extends Component {
           <div className="card" style={{backgroundColor: "#D3D3D3",}}>
             <div className="card-body">
               <h5 className="card-title">Super Desel</h5>
-              <p className="card-text">Quantity: {data.sDesel}</p>
+              <p className="card-text">Quantity: {data.sDesel} liters</p>
             </div>
           </div>
         </div>
@@ -157,7 +157,7 @@ export default class FuelDetails extends Component {
           <div className="card" style={{backgroundColor: "#D3D3D3",}}>
             <div className="card-body">
               <h5 className="card-title">NormalPetrol</h5>
-              <p className="card-text">Quantity: {data.nPetrol}</p>
+              <p className="card-text">Quantity: {data.nPetrol} liters</p>
             </div>
           </div>
         </div>
@@ -165,7 +165,7 @@ export default class FuelDetails extends Component {
           <div className="card" style={{backgroundColor: "#D3D3D3",}}>
             <div className="card-body">
               <h5 className="card-title">Super Petrol</h5>
-              <p className="card-text">Quantity:  {data.sPetrol}</p>
+              <p className="card-text">Quantity:  {data.sPetrol} liters</p>
             </div>
           </div>
         </div>
